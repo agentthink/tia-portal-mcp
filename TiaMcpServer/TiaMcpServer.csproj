@@ -1,0 +1,66 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>tia-mcp</ToolCommandName>
+    <PackageId>TiaMcpServer</PackageId>
+    <Description>Model Context Protocol (MCP) server for Siemens SIMATIC TIA Portal V21. Enables MCP clients and AI agents to inspect, diagnose, and automate TIA Portal projects via Siemens Openness.</Description>
+    <PackageTags>mcp;model-context-protocol;tia-portal;siemens;automation;plc;openness</PackageTags>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ModelContextProtocol" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.12" />
+    <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.401" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TiaMcpServer.Contracts\TiaMcpServer.Contracts.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="../README.md" Pack="true" PackagePath="/" />
+    <None Include="../LICENSE" Pack="true" PackagePath="/" />
+  </ItemGroup>
+
+  <Target Name="BuildOpennessWorker" BeforeTargets="Build">
+    <MSBuild Projects="..\TiaMcpServer.OpennessWorker\TiaMcpServer.OpennessWorker.csproj"
+      Targets="Build"
+      Properties="Configuration=$(Configuration)"
+      RemoveProperties="TargetFramework;TargetFrameworks;RuntimeIdentifier;SelfContained;PackAsTool" />
+  </Target>
+
+  <Target Name="CopyOpennessWorker" AfterTargets="Build" BeforeTargets="PackTool">
+    <RemoveDir Directories="$(OutputPath)openness-worker" />
+    <ItemGroup>
+      <OpennessWorkerFiles
+        Include="..\TiaMcpServer.OpennessWorker\bin\$(Configuration)\net48\**\*.*"
+        Exclude="..\TiaMcpServer.OpennessWorker\bin\$(Configuration)\net48\Siemens.Engineering*.dll;..\TiaMcpServer.OpennessWorker\bin\$(Configuration)\net48\**\*.runtimeconfig.json" />
+    </ItemGroup>
+    <Copy SourceFiles="@(OpennessWorkerFiles)"
+      DestinationFiles="@(OpennessWorkerFiles->'$(OutputPath)openness-worker\%(RecursiveDir)%(Filename)%(Extension)')"
+      SkipUnchangedFiles="true" />
+  </Target>
+
+  <Target Name="RegisterOpennessWorkerPublishFiles" AfterTargets="ComputeFilesToPublish">
+    <RemoveDir Directories="$(PublishDir)openness-worker" />
+    <ItemGroup>
+      <OpennessWorkerPublishFiles
+        Include="..\TiaMcpServer.OpennessWorker\bin\$(Configuration)\net48\**\*.*"
+        Exclude="..\TiaMcpServer.OpennessWorker\bin\$(Configuration)\net48\Siemens.Engineering*.dll;..\TiaMcpServer.OpennessWorker\bin\$(Configuration)\net48\**\*.runtimeconfig.json" />
+      <ResolvedFileToPublish Include="@(OpennessWorkerPublishFiles)">
+        <RelativePath>openness-worker\%(RecursiveDir)%(Filename)%(Extension)</RelativePath>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      </ResolvedFileToPublish>
+    </ItemGroup>
+  </Target>
+
+</Project>

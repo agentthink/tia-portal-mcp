@@ -1,0 +1,86 @@
+# Documentation
+
+Everything in this tree, grouped by who it is for. **A new document under `docs/` is not
+complete until it is listed here** — that rule is what keeps this index trustworthy.
+
+For the project overview, tool list, and quick start, see the [README](../README.md).
+
+## Using the server
+
+| Document | What you will find |
+| --- | --- |
+| [Installation](guides/installation.md) | Requirements, `dotnet tool install`, the `doctor` command, registering with an MCP client, and the read-only / read-write access modes |
+| [MCP client configuration](guides/mcp-client-configuration.md) | Client configuration reference and how block paths are addressed |
+| [Troubleshooting](guides/troubleshooting.md) | Common failures, and TIA Portal V21 behaviors verified against a real installation |
+| [Supported operations](SupportedOperations/README.md) | Every operation by area — project, PLC, devices, network, HMI, and more |
+
+## Understanding the design
+
+| Document | What you will find |
+| --- | --- |
+| [Architecture](ARCHITECTURE.md) | Two-process topology, access-mode enforcement, worker transport, batch and network execution, the canonical JSON seam, write safety, and testing |
+
+## Building and contributing
+
+| Document | What you will find |
+| --- | --- |
+| [Contributing](../CONTRIBUTING.md) | Contribution workflow, branch focus, commit message format, pull requests |
+| [Building from source](development/building.md) | Restore, build, test with coverage, and run the server locally |
+| [Local MCP sandbox testing](development/local-mcp-testing.md) | The MCP Inspector loop against a disposable project copy |
+| [Packaging](development/packaging.md) | Build the NuGet package and install a local branch build as the `tia-mcp` global tool |
+
+Agent-facing build and convention reference lives in [AGENTS.md](../AGENTS.md).
+
+## Direction
+
+| Document | What you will find |
+| --- | --- |
+| [Roadmap](../ROADMAP.md) | Directional priorities for the project as a whole |
+| [Network operations roadmap](roadmap/network-operations.md) | Phased delivery of the network tool surface and its JSON contract |
+| [Export/import format roadmap](roadmap/export-import-format.md) | Source-format exchange for UDTs, data blocks, and SCL |
+| [Improvement log](IMPROVEMENT_LOG.md) | Open follow-ups above, completed engineering work below |
+
+## Project history
+
+[`superpowers/`](superpowers/README.md) holds design specs, implementation plans, and live
+acceptance reports produced while building features. It is historical process material, not
+current documentation — see its index for what is there and how to read it.
+
+Latest process entries: [Network Phases 4-6 completion and delivery design](superpowers/specs/2026-09-21-network-phases-4-6-delivery-design.md),
+its [PR 1 Network Phase 4 finish plan](superpowers/plans/2026-09-21-pr1-network-phase4-finish.md),
+the [Network Phase 4 current-revision live report (bounded PASS on 2026-09-24, prior failed attempt retained)](superpowers/acceptance/reports/2026-09-21-network-phase4-current-revision-live.md),
+[Issue #30 PLC block header metadata design](superpowers/specs/2026-09-13-issue-30-plc-block-header-metadata-design.md),
+its [implementation plan](superpowers/plans/2026-09-13-issue-30-plc-block-header-metadata.md),
+[.NET 10 migration and dependency alignment design](superpowers/specs/2026-09-12-dotnet-10-migration-design.md),
+its [implementation plan](superpowers/plans/2026-09-12-dotnet-10-migration.md),
+[issue #32 scalable project-tree browsing v3 design](superpowers/specs/2026-09-06-issue-32-scalable-project-tree-browsing-v3-design.md),
+its [implementation plan](superpowers/plans/2026-09-06-issue-32-scalable-project-tree-browsing-v3.md),
+and [accepted read-only live report with explicit ambiguity waiver (2026-09-12)](superpowers/acceptance/reports/2026-09-06-issue-32-project-tree-v3-live.md),
+[write-safety preview and registered-surface hardening design](superpowers/specs/2026-09-01-write-safety-hardening-design.md),
+with separate plans for [PR 1 explicit MCP tool annotations](superpowers/plans/2026-09-01-pr1-explicit-mcp-tool-annotations.md),
+[its completed live acceptance report](superpowers/acceptance/reports/2026-09-01-pr1-explicit-mcp-tool-annotations-live.md),
+[PR 2 registered-tool delegation](superpowers/plans/2026-09-01-pr2-registered-tool-delegation.md),
+[its completed live acceptance report](superpowers/acceptance/reports/2026-09-01-pr2-registered-tool-delegation-live.md),
+[PR 3 exact `update_tag` safety snapshots](superpowers/plans/2026-09-01-pr3-update-tag-safety-snapshot.md),
+[its completed mandatory live acceptance report](superpowers/acceptance/reports/2026-09-01-pr3-update-tag-safety-snapshot-live.md),
+[PR 4 bounded structured preview diffs](superpowers/plans/2026-09-01-pr4-structured-preview-diff.md),
+[its completed live Preview and authorized Apply/restore/compile acceptance report (2026-09-05)](superpowers/acceptance/reports/2026-09-01-pr4-structured-preview-diff-live.md),
+[PR 5 tag-operation safety scopes](superpowers/plans/2026-09-01-pr5-tag-operation-safety-scopes.md),
+[its completed mandatory live acceptance report (2026-09-05)](superpowers/acceptance/reports/2026-09-01-pr5-tag-operation-safety-scopes-live.md),
+[PR 6 project-tree safety scopes](superpowers/plans/2026-09-01-pr6-project-tree-safety-scopes.md),
+and [its completed mandatory live acceptance report (2026-09-06)](superpowers/acceptance/reports/2026-09-01-pr6-project-tree-safety-scopes-live.md);
+[project completeness and hardware pagination design](superpowers/specs/2026-08-28-issue-31-project-completeness-pagination-design.md),
+its [PR 1 project enumeration completeness plan](superpowers/plans/2026-08-28-project-enumeration-completeness.md),
+the [PR 2 hardware pagination plan](superpowers/plans/2026-08-29-hardware-pagination.md),
+[PR #29 binding findings repair design](superpowers/specs/2026-08-28-pr29-binding-findings-repair-design.md),
+and its [implementation plan](superpowers/plans/2026-08-28-pr29-binding-findings-repair.md).
+
+PR 5's [current tag-safety acceptance boundary](SupportedOperations/PLC_OPERATIONS_SUMMARY.md#tag-safety-acceptance-boundary)
+now links its completed guarded live V21 result while keeping public table-list completeness,
+broader snapshots, Software Unit namespace collisions, multilingual comments, PLC control, and
+plant acceptance explicitly outside the accepted scope.
+
+PR 6's [current project-tree safety acceptance boundary](SupportedOperations/PLC_OPERATIONS_SUMMARY.md#project-tree-safety-acceptance-boundary)
+links the completed PLC-global and Software Unit guarded live V21 results while keeping broader
+snapshot narrowing, PLC start/stop, save or persistence behavior, and plant acceptance outside the
+accepted scope.

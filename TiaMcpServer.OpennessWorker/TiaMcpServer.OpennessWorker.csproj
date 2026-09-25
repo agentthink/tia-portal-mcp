@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <GenerateRuntimeConfigurationFiles>false</GenerateRuntimeConfigurationFiles>
+    <TiaOpennessStubReferenceDir>$(MSBuildProjectDirectory)\..\ref</TiaOpennessStubReferenceDir>
+    <UseTiaPortalReferenceStubs Condition="'$(UseTiaPortalReferenceStubs)' == '' and Exists('$(TiaPortalV21Dir)\Siemens.Engineering.Base.dll') and Exists('$(TiaPortalV21Dir)\Siemens.Engineering.Step7.dll')">false</UseTiaPortalReferenceStubs>
+    <UseTiaPortalReferenceStubs Condition="'$(UseTiaPortalReferenceStubs)' == ''">true</UseTiaPortalReferenceStubs>
+    <TiaOpennessReferenceDir Condition="'$(UseTiaPortalReferenceStubs)' == 'true'">$(TiaOpennessStubReferenceDir)</TiaOpennessReferenceDir>
+    <TiaOpennessReferenceDir Condition="'$(UseTiaPortalReferenceStubs)' != 'true'">$(TiaPortalV21Dir)</TiaOpennessReferenceDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="10.0.12" />
+    <PackageReference Include="System.ValueTuple" Version="4.6.2" />
+    <ProjectReference Include="..\TiaMcpServer.Contracts\TiaMcpServer.Contracts.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(NuGetPackageRoot)system.valuetuple\4.6.2\lib\net47\System.ValueTuple.dll"
+          Link="System.ValueTuple.dll"
+          CopyToOutputDirectory="Always" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Siemens.Engineering.Base">
+      <HintPath>$(TiaOpennessReferenceDir)\Siemens.Engineering.Base.dll</HintPath>
+      <Private>False</Private>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </Reference>
+    <Reference Include="Siemens.Engineering.Step7">
+      <HintPath>$(TiaOpennessReferenceDir)\Siemens.Engineering.Step7.dll</HintPath>
+      <Private>False</Private>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </Reference>
+  </ItemGroup>
+
+  <Target Name="ValidateTiaOpennessReferences" BeforeTargets="ResolveReferences">
+    <Message Importance="High"
+             Text="TIA Openness compile references: $(TiaOpennessReferenceDir) (UseTiaPortalReferenceStubs=$(UseTiaPortalReferenceStubs))" />
+    <Error Condition="!Exists('$(TiaOpennessReferenceDir)\Siemens.Engineering.Base.dll') or !Exists('$(TiaOpennessReferenceDir)\Siemens.Engineering.Step7.dll')"
+           Text="TIA Portal V21 Openness reference assemblies were not found in '$(TiaOpennessReferenceDir)'. Install TIA Portal V21, set TiaPortalV21Dir, or build with /p:UseTiaPortalReferenceStubs=true for CI/package builds." />
+  </Target>
+</Project>

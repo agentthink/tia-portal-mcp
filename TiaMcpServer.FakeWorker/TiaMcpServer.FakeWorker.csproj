@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Siemens-free contract DTOs only, so scripted scenarios can serialize complete
+         contract-shaped objects (HardwareConfigInfo, ConfigureNetworkDeviceResultInfo, etc.)
+         instead of hand-maintained escaped JSON fragments. -->
+    <ProjectReference Include="..\TiaMcpServer.Contracts\TiaMcpServer.Contracts.csproj" />
+  </ItemGroup>
+</Project>

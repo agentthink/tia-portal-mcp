@@ -1,0 +1,44 @@
+<Project>
+  <!-- Compile the real worker's serializer members without Program's TIA session/static
+       initialization. No copied serializer policy and no Siemens assembly or process. -->
+  <UsingTask TaskName="GenerateWorkerSerializationHarness" TaskFactory="RoslynCodeTaskFactory"
+             AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <WorkerSource ParameterType="System.String" Required="true" />
+      <OutputFile ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.Linq" />
+      <Using Namespace="System.Text.RegularExpressions" />
+      <Code Type="Fragment" Language="cs"><![CDATA[
+        var source = File.ReadAllText(WorkerSource);
+        var fields = Regex.Matches(source,
+            @"(?ms)^    private static readonly JsonSerializerOptions \w+ = new\(\).*?^    };"
+        ).Cast<Match>().Select(match => match.Value).ToArray();
+        var success = Regex.Matches(source,
+            @"(?ms)^    private static WorkerResponse Success<T>\(T payload\).*?^    }");
+        if (fields.Length == 0 || success.Count != 1)
+        {
+            Log.LogError("Could not extract the actual worker serialization members; update the offline harness.");
+            return false;
+        }
+        var generated = "// Generated from the actual worker Program.cs; do not edit.\n"
+            + "using System.Text.Json;\nusing System.Text.Json.Serialization;\nusing TiaMcpServer.Contracts;\n"
+            + "namespace TiaMcpServer.Tests.TestUtilities;\ninternal static class WorkerSerializationHarness\n{\n"
+            + string.Join("\n", fields) + "\n" + success[0].Value
+            + "\npublic static WorkerResponse Serialize<T>(T payload) => Success(payload);\n}\n";
+        Directory.CreateDirectory(Path.GetDirectoryName(OutputFile));
+        File.WriteAllText(OutputFile, generated);
+      ]]></Code>
+    </Task>
+  </UsingTask>
+  <Target Name="CompileWorkerSerializationHarness" BeforeTargets="CoreCompile">
+    <GenerateWorkerSerializationHarness
+      WorkerSource="$(MSBuildProjectDirectory)\..\TiaMcpServer.OpennessWorker\Program.cs"
+      OutputFile="$(IntermediateOutputPath)WorkerSerializationHarness.g.cs" />
+    <ItemGroup>
+      <Compile Include="$(IntermediateOutputPath)WorkerSerializationHarness.g.cs" />
+    </ItemGroup>
+  </Target>
+</Project>

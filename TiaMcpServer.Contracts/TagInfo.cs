@@ -1,0 +1,12 @@
+namespace TiaMcpServer.Contracts;
+
+public class TagInfo
+{
+    public string Name { get; set; } = string.Empty;
+
+    public string DataType { get; set; } = string.Empty;
+
+    public string LogicalAddress { get; set; } = string.Empty;
+
+    public string? Comment { get; set; }
+}
